@@ -1,0 +1,20 @@
+<!-- Пример страницы с fetch-запросом к API -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>OSRM Demo</title>
+</head>
+<body>
+  <h1>Пример запроса</h1>
+  <pre id="out"></pre>
+  <script>
+  fetch('/route?start=30.7233,46.4825&end=30.7326,46.4775')
+    .then(r => r.json())
+    .then(j => {
+      document.getElementById('out').textContent = JSON.stringify(j, null, 2);
+    })
+    .catch(err => console.error(err));
+  </script>
+</body>
+</html>

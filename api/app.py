@@ -1,9 +1,19 @@
+"""Простая обёртка Flask для обращений к OSRM."""
+
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="")
+CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
+
+
+@app.route('/')
+def index():
+    """Отдаёт пример использования API."""
+    return app.send_static_file('index.html')
 
 @app.route('/route')
 def route():
