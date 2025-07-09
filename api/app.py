@@ -1,6 +1,7 @@
 """Простая обёртка Flask для обращений к OSRM."""
 
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
@@ -8,6 +9,9 @@ import requests
 app = Flask(__name__, static_folder="static", static_url_path="")
 CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
+
+# Конфигурация логгера, чтобы сообщения запуска сервера не попадали в error.
+logging.getLogger('werkzeug').setLevel(logging.INFO)
 
 
 @app.route('/')

@@ -47,3 +47,10 @@ def test_run_app_port(monkeypatch):
         app_reloaded.run_app()
         mock_run.assert_called_with(host='0.0.0.0', port=1234)
 
+
+def test_logging_level():
+    """Проверяет уровень логирования werkzeug."""
+    import logging
+    app_reloaded = importlib.reload(app_module)
+    assert logging.getLogger('werkzeug').level <= logging.INFO
+

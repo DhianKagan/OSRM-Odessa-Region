@@ -54,3 +54,4 @@ python scripts/update_data.py
 - При необходимости замените `car.lua` на другой профиль (например, `foot.lua` или `bicycle.lua`).
 - Обновляйте `odessa_oblast.osm.pbf` по мере выхода новых данных.
 - Для корректной установки зависимостей в Dockerfile уже прописаны архивные репозитории Debian.
+- Логирование Flask настроено на INFO; подробнее в `LOGGING.md`.
