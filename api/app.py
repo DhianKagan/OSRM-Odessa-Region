@@ -21,7 +21,7 @@ def route():
     end = request.args.get('end')
     if not start or not end:
         return jsonify({'error': 'start and end required'}), 400
-    url = f"{OSRM_URL}/route/v1/driving/{start};{end}?overview=false"
+    url = "{}/route/v1/driving/{};{}?overview=false".format(OSRM_URL, start, end)
     try:
         resp = requests.get(url)
         resp.raise_for_status()
