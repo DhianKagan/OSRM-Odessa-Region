@@ -70,3 +70,4 @@ def test_run_app_logging_setup(mock_run):
         werk.handlers = old_werk_handlers
         werk.setLevel(old_werk_level)
 
+
