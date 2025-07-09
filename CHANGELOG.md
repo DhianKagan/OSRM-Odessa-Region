@@ -1,6 +1,8 @@
-# Changelog
+# Изменения
 
 ## [Unreleased]
-- Initial repository structure
-- Added `api` directory with a simple Flask wrapper
-- CORS для API и пример fetch на странице `/`
+- Исходная структура репозитория
+- Добавлена директория `api` с простой обёрткой Flask
+- Поддержка CORS и пример fetch на странице `/`
+- Скрипт `scripts/update_data.py` для автоматического обновления карты
+- Документация переведена на русский и дополнена инструкциями по Railway

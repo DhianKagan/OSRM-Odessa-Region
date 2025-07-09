@@ -1,8 +1,8 @@
-# OSRM Odessa
+# OSRM Одесса
 
-This repository provides a Docker container setup for an OSRM service using data for the Odessa region. It can be built and run locally or deployed via GitHub Codespaces and Railway.
+Репозиторий содержит Docker-конфигурацию сервиса OSRM с данными Одесской области. Его можно запустить локально или развернуть на Railway.
 
-## Repository Structure
+## Структура репозитория
 ```
 osrm-odessa/
 ├── api/
@@ -16,42 +16,48 @@ osrm-odessa/
 └── README.md
 ```
 
-The `data` directory should contain the `odessa_oblast.osm.pbf` map file downloaded from [Geofabrik](https://download.geofabrik.de/). The `.stxxl` file is required for disk-based caching during preprocessing and should contain:
+В каталоге `data` должен находиться файл `odessa_oblast.osm.pbf`, скачанный с [Geofabrik](https://download.geofabrik.de/). Файл `.stxxl` требуется для дискового кеширования и содержит:
 
 ```
 disk=/tmp/stxxl,10G,syscall
 ```
 
-Both `.stxxl` and the map file are ignored via `.gitignore`.
+Оба файла исключены из Git при помощи `.gitignore`.
 
-## Usage
-### Build and Run Locally
+## Использование
+### Сборка и запуск локально
 ```
 docker build -t osrm-odessa .
 docker run -d -p 5000:5000 osrm-odessa
 ```
-Then query the service:
+После запуска можно выполнить запрос:
 ```
 curl "http://localhost:5000/route/v1/driving/30.7233,46.4825;30.7326,46.4775?overview=false"
 ```
 
-### Run the Simple API Wrapper
-Install dependencies and start the Flask app which proxies requests to the OSRM service:
+### Запуск простого API
+Установите зависимости и запустите обёртку Flask, пересылающую запросы в OSRM:
 ```
 pip install -r api/requirements.txt
 python api/app.py
 ```
-The `OSRM_URL` environment variable can be used to point the wrapper to a remote OSRM instance.
+Переменная окружения `OSRM_URL` позволяет указать удалённый экземпляр OSRM.
 
 ### Пример fetch
-Запустить сервер и открыть `http://localhost:8080/` в браузере. На странице расположен
-пример JavaScript, выполняющий `fetch` к API и выводящий ответ.
+Запустите сервер и откройте `http://localhost:8080/` в браузере. На странице приведён пример JavaScript, выполняющий `fetch` к API и выводящий ответ.
 
-### Deploy on Railway
-1. Create a new Railway project and connect this repository.
-2. Ensure the `PORT` environment variable is set to `5000`.
-3. Deploy the project and use the generated URL to query the service.
+### Обновление данных
+Для загрузки свежей карты и подготовки файлов OSRM выполните:
+```
+python scripts/update_data.py
+```
 
-### Notes
-- Replace `car.lua` with other profiles (e.g., `foot.lua`, `bicycle.lua`) if needed.
-- Update `odessa_oblast.osm.pbf` periodically for fresh routing data.
+### Развёртывание на Railway
+1. Создайте новый проект Railway и подключите репозиторий.
+2. Установите переменную `PORT` со значением `5000`.
+3. Разверните проект и используйте выданный URL для запросов к сервису.
+4. Включите автоматический рестарт сервиса при сбоях в настройках Railway.
+
+### Заметки
+- При необходимости замените `car.lua` на другой профиль (например, `foot.lua` или `bicycle.lua`).
+- Обновляйте `odessa_oblast.osm.pbf` по мере выхода новых данных.
