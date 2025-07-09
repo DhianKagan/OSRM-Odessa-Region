@@ -5,6 +5,9 @@ This repository provides a Docker container setup for an OSRM service using data
 ## Repository Structure
 ```
 osrm-odessa/
+├── api/
+│   ├── app.py
+│   └── requirements.txt
 ├── data/
 │   └── odessa_oblast.osm.pbf
 ├── Dockerfile
@@ -31,6 +34,14 @@ Then query the service:
 ```
 curl "http://localhost:5000/route/v1/driving/30.7233,46.4825;30.7326,46.4775?overview=false"
 ```
+
+### Run the Simple API Wrapper
+Install dependencies and start the Flask app which proxies requests to the OSRM service:
+```
+pip install -r api/requirements.txt
+python api/app.py
+```
+The `OSRM_URL` environment variable can be used to point the wrapper to a remote OSRM instance.
 
 ### Deploy on Railway
 1. Create a new Railway project and connect this repository.
