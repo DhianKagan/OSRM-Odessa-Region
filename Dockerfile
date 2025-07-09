@@ -11,8 +11,12 @@ RUN osrm-extract -p /opt/car.lua /data/odessa_oblast.osm.pbf && \
 FROM osrm/osrm-backend
 WORKDIR /app
 COPY --from=builder /data /data
-RUN apt-get update \ 
-    && apt-get install -y python3 python3-pip \ 
+# Debian Stretch архивирован; корректируем источники пакетов
+RUN sed -i 's|deb.debian.org/debian|archive.debian.org/debian|g' /etc/apt/sources.list \
+    && sed -i 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' /etc/apt/sources.list \
+    && sed -i '/stretch-updates/d' /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
 COPY api /app
 COPY start.sh /start.sh
