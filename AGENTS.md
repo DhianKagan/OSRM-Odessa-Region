@@ -1,5 +1,12 @@
-# AGENT Guidelines
+# Инструкция для AGENT
 
-- Keep `.stxxl` and large data files untracked.
-- Update `README.md`, `ROADMAP.md`, and `CHANGELOG.md` only when significant changes occur.
-- Run `docker build` and `docker run` to verify the container when modifying the Dockerfile.
+- Не отслеживать `.stxxl` и крупные файлы данных.
+- Обновлять `README.md`, `ROADMAP.md` и `CHANGELOG.md` только при значительных изменениях.
+- При изменении `Dockerfile` выполнять `docker build` и `docker run` для проверки контейнера.
+- Вся документация должна быть на русском языке.
+- Код лаконичный и чистый; каждый файл содержит шапку с кратким описанием.
+- Вся логика покрывается тестами.
+- На Railway необходимо настроить автоматический рестарт сервиса при падении.
+- Проект ориентирован исключительно на запуск в Railway и отвечает расстоянием и маршрутом для автомобиля.
+- В `README.md` должны быть инструкции по обращению к API.
+
