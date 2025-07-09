@@ -1,6 +1,8 @@
 """Простая обёртка Flask для обращений к OSRM."""
 
 import os
+import logging
+import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
@@ -32,6 +34,9 @@ def route():
 def run_app() -> None:
     """Запускает сервер, учитывая переменную PORT."""
     port = int(os.environ.get('PORT', '5000'))
+    handler = logging.StreamHandler(sys.stdout)
+    logging.basicConfig(level=logging.INFO, handlers=[handler])
+    logging.getLogger('werkzeug').setLevel(logging.INFO)
     app.run(host='0.0.0.0', port=port)
 
 

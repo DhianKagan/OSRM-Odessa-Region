@@ -4,6 +4,7 @@ import sys
 from unittest.mock import patch, MagicMock
 import importlib
 import os
+import logging
 
 sys.path.append('api')
 import app as app_module
@@ -46,4 +47,26 @@ def test_run_app_port(monkeypatch):
     with patch.object(app_reloaded.app, 'run') as mock_run:
         app_reloaded.run_app()
         mock_run.assert_called_with(host='0.0.0.0', port=1234)
+
+
+@patch('app.app.run')
+def test_run_app_logging_setup(mock_run):
+    root = logging.getLogger()
+    werk = logging.getLogger('werkzeug')
+    old_root_handlers = root.handlers[:]
+    old_root_level = root.level
+    old_werk_handlers = werk.handlers[:]
+    old_werk_level = werk.level
+    root.handlers = []
+    werk.handlers = []
+    try:
+        app_module.run_app()
+        assert root.level == logging.INFO
+        assert werk.level == logging.INFO
+        assert any(isinstance(h, logging.StreamHandler) and h.stream is sys.stdout for h in root.handlers)
+    finally:
+        root.handlers = old_root_handlers
+        root.setLevel(old_root_level)
+        werk.handlers = old_werk_handlers
+        werk.setLevel(old_werk_level)
 
