@@ -1,7 +1,7 @@
-# Roadmap
+# Дорожная карта
 
-- [ ] Initial OSRM container setup
-- [ ] Automate data updates
-- [ ] Deployment guide for Railway
-- [x] Simple API wrapper for OSRM
+- [x] Первоначальная настройка контейнера OSRM
+- [x] Автоматизация обновления данных
+- [x] Руководство по развёртыванию на Railway
+- [x] Простая API‑обёртка для OSRM
 - [x] Поддержка CORS и пример Fetch

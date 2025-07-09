@@ -1,1 +1,1 @@
-Place odessa_oblast.osm.pbf here.
+Сюда помещается файл `odessa_oblast.osm.pbf`.
