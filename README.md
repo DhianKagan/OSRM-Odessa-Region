@@ -43,6 +43,10 @@ python api/app.py
 ```
 The `OSRM_URL` environment variable can be used to point the wrapper to a remote OSRM instance.
 
+### Пример fetch
+Запустить сервер и открыть `http://localhost:8080/` в браузере. На странице расположен
+пример JavaScript, выполняющий `fetch` к API и выводящий ответ.
+
 ### Deploy on Railway
 1. Create a new Railway project and connect this repository.
 2. Ensure the `PORT` environment variable is set to `5000`.
