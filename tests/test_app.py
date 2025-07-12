@@ -41,6 +41,34 @@ def test_stability(mock_get):
         assert r.status_code == 200
 
 
+@patch('app.requests.get', return_value=_mock_resp())
+def test_table(mock_get):
+    client = flask_app.test_client()
+    r = client.get('/table?points=1,1;2,2')
+    assert r.status_code == 200
+
+
+@patch('app.requests.get', return_value=_mock_resp())
+def test_nearest(mock_get):
+    client = flask_app.test_client()
+    r = client.get('/nearest?point=1,1')
+    assert r.status_code == 200
+
+
+@patch('app.requests.get', return_value=_mock_resp())
+def test_match(mock_get):
+    client = flask_app.test_client()
+    r = client.get('/match?points=1,1;2,2')
+    assert r.status_code == 200
+
+
+@patch('app.requests.get', return_value=_mock_resp())
+def test_trip(mock_get):
+    client = flask_app.test_client()
+    r = client.get('/trip?points=1,1;2,2')
+    assert r.status_code == 200
+
+
 def test_run_app_port(monkeypatch):
     monkeypatch.setenv('PORT', '1234')
     app_reloaded = importlib.reload(app_module)
