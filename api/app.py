@@ -35,6 +35,74 @@ def route():
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 
+
+@app.route('/table')
+def table():
+    """Передаёт запрос к сервису table OSRM."""
+    coords = request.args.get('points')
+    if not coords:
+        return jsonify({'error': 'points required'}), 400
+    params = request.args.to_dict(flat=True)
+    params.pop('points', None)
+    url = f"{OSRM_URL}/table/v1/driving/{coords}"
+    try:
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)}), 502
+
+
+@app.route('/nearest')
+def nearest():
+    """Передаёт запрос к сервису nearest OSRM."""
+    coord = request.args.get('point')
+    if not coord:
+        return jsonify({'error': 'point required'}), 400
+    params = request.args.to_dict(flat=True)
+    params.pop('point', None)
+    url = f"{OSRM_URL}/nearest/v1/driving/{coord}"
+    try:
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)}), 502
+
+
+@app.route('/match')
+def match():
+    """Передаёт запрос к сервису match OSRM."""
+    coords = request.args.get('points')
+    if not coords:
+        return jsonify({'error': 'points required'}), 400
+    params = request.args.to_dict(flat=True)
+    params.pop('points', None)
+    url = f"{OSRM_URL}/match/v1/driving/{coords}"
+    try:
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)}), 502
+
+
+@app.route('/trip')
+def trip():
+    """Передаёт запрос к сервису trip OSRM."""
+    coords = request.args.get('points')
+    if not coords:
+        return jsonify({'error': 'points required'}), 400
+    params = request.args.to_dict(flat=True)
+    params.pop('points', None)
+    url = f"{OSRM_URL}/trip/v1/driving/{coords}"
+    try:
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)}), 502
+
 def run_app() -> None:
     """Запускает сервер, учитывая переменную PORT."""
     port = int(os.environ.get('PORT', '5000'))

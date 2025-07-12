@@ -6,3 +6,4 @@
 - [x] Простая API‑обёртка для OSRM
 - [x] Поддержка CORS и пример Fetch
 - [x] Единый контейнер с OSRM и API
+- [x] Поддержка сервисов `/table`, `/nearest`, `/match`, `/trip`
