@@ -44,7 +44,7 @@ def table():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = f"{OSRM_URL}/table/v1/driving/{coords}"
+    url = "{}/table/v1/driving/{}".format(OSRM_URL, coords)
     try:
         resp = requests.get(url, params=params)
         resp.raise_for_status()
@@ -61,7 +61,7 @@ def nearest():
         return jsonify({'error': 'point required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('point', None)
-    url = f"{OSRM_URL}/nearest/v1/driving/{coord}"
+    url = "{}/nearest/v1/driving/{}".format(OSRM_URL, coord)
     try:
         resp = requests.get(url, params=params)
         resp.raise_for_status()
@@ -78,7 +78,7 @@ def match():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = f"{OSRM_URL}/match/v1/driving/{coords}"
+    url = "{}/match/v1/driving/{}".format(OSRM_URL, coords)
     try:
         resp = requests.get(url, params=params)
         resp.raise_for_status()
@@ -95,7 +95,7 @@ def trip():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = f"{OSRM_URL}/trip/v1/driving/{coords}"
+    url = "{}/trip/v1/driving/{}".format(OSRM_URL, coords)
     try:
         resp = requests.get(url, params=params)
         resp.raise_for_status()
