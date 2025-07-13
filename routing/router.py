@@ -1,6 +1,7 @@
 """Обёртка над HTTP API OSRM с возможностью смены алгоритма."""
 
 import os
+from typing import Optional
 import requests
 
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
@@ -16,31 +17,31 @@ class Router:
         """Изменить алгоритм маршрутизации."""
         self.algorithm = name
 
-    def _request(self, path: str, params: dict | None = None) -> dict:
+    def _request(self, path: str, params: Optional[dict] = None) -> dict:
         params = params or {}
-        url = f"{self.base_url}{path}"
+        url = "{}{}".format(self.base_url, path)
         resp = requests.get(url, params=params, timeout=60)
         resp.raise_for_status()
         return resp.json()
 
     def route(self, start: str, end: str) -> dict:
-        path = f"/route/v1/driving/{start};{end}?overview=false"
+        path = "/route/v1/driving/{};{}?overview=false".format(start, end)
         return self._request(path)
 
     def table(self, points: str, **params) -> dict:
-        path = f"/table/v1/driving/{points}"
+        path = "/table/v1/driving/{}".format(points)
         return self._request(path, params)
 
     def nearest(self, point: str, **params) -> dict:
-        path = f"/nearest/v1/driving/{point}"
+        path = "/nearest/v1/driving/{}".format(point)
         return self._request(path, params)
 
     def match(self, points: str, **params) -> dict:
-        path = f"/match/v1/driving/{points}"
+        path = "/match/v1/driving/{}".format(points)
         return self._request(path, params)
 
     def trip(self, points: str, **params) -> dict:
-        path = f"/trip/v1/driving/{points}"
+        path = "/trip/v1/driving/{}".format(points)
         return self._request(path, params)
 
     def rebuild(self) -> None:
