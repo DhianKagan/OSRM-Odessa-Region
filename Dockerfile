@@ -19,6 +19,7 @@ RUN sed -i 's|deb.debian.org/debian|archive.debian.org/debian|g' /etc/apt/source
     && apt-get install -y python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
 COPY api /app
+COPY routing /app/routing
 COPY start.sh /start.sh
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
 ENV OSRM_URL=http://localhost:5001

@@ -10,7 +10,7 @@ class Router:
 
     def __init__(self, base_url: str = OSRM_URL):
         self.base_url = base_url
-        self.algorithm = os.environ.get('OSRM_ALGORITHM', 'ch')
+        self.algorithm = os.environ.get('OSRM_ALGORITHM', 'mld')
 
     def set_algorithm(self, name: str) -> None:
         """Изменить алгоритм маршрутизации."""
