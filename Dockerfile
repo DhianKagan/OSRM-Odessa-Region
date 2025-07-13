@@ -2,7 +2,7 @@
 FROM osrm/osrm-backend as builder
 WORKDIR /data
 COPY data/odessa_oblast.osm.pbf /data/
-COPY .stxxl /root/.stxxl
+RUN echo 'disk=/tmp/stxxl,10G,syscall' > /root/.stxxl
 RUN osrm-extract -p /opt/car.lua /data/odessa_oblast.osm.pbf && \
     osrm-partition /data/odessa_oblast.osrm && \
     osrm-customize /data/odessa_oblast.osrm

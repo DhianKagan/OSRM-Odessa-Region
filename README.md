@@ -14,18 +14,17 @@ osrm-odessa/
 ├── data/
 │   └── odessa_oblast.osm.pbf
 ├── Dockerfile
-├── .stxxl
 ├── .gitignore
 └── README.md
 ```
 
-В каталоге `data` должен находиться файл `odessa_oblast.osm.pbf`, скачанный с [Geofabrik](https://download.geofabrik.de/). Файл `.stxxl` требуется для дискового кеширования и содержит:
+В каталоге `data` должен находиться файл `odessa_oblast.osm.pbf`, скачанный с [Geofabrik](https://download.geofabrik.de/). Во время сборки контейнера автоматически создаётся файл `.stxxl` со строкой:
 
 ```
 disk=/tmp/stxxl,10G,syscall
 ```
 
-Оба файла исключены из Git при помощи `.gitignore`.
+Файлы данных и `.stxxl` не добавляются в Git благодаря `.gitignore`.
 
 ## Использование
 ### Сборка и запуск локально
