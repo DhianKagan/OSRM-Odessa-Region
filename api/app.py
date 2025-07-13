@@ -14,6 +14,22 @@ CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
 router = Router(OSRM_URL)
 
+
+def _call_osrm(method, *args, **kwargs):
+    """Вызывает OSRM и корректно передаёт код ошибки."""
+    try:
+        data = method(*args, **kwargs)
+        return jsonify(data), 200
+    except requests.HTTPError as exc:
+        resp = exc.response
+        try:
+            payload = resp.json()
+        except ValueError:
+            payload = {'error': resp.text}
+        return jsonify(payload), resp.status_code
+    except requests.RequestException as exc:
+        return jsonify({'error': str(exc)}), 502
+
 # Конфигурация логгера, чтобы сообщения запуска сервера не попадали в error.
 logging.getLogger('werkzeug').setLevel(logging.INFO)
 
@@ -29,11 +45,7 @@ def route():
     end = request.args.get('end')
     if not start or not end:
         return jsonify({'error': 'start and end required'}), 400
-    try:
-        data = router.route(start, end)
-        return jsonify(data)
-    except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 502
+    return _call_osrm(router.route, start, end)
 
 
 @app.route('/table')
@@ -44,11 +56,7 @@ def table():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    try:
-        data = router.table(coords, **params)
-        return jsonify(data)
-    except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 502
+    return _call_osrm(router.table, coords, **params)
 
 
 @app.route('/nearest')
@@ -59,11 +67,7 @@ def nearest():
         return jsonify({'error': 'point required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('point', None)
-    try:
-        data = router.nearest(coord, **params)
-        return jsonify(data)
-    except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 502
+    return _call_osrm(router.nearest, coord, **params)
 
 
 @app.route('/match')
@@ -74,11 +78,7 @@ def match():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    try:
-        data = router.match(coords, **params)
-        return jsonify(data)
-    except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 502
+    return _call_osrm(router.match, coords, **params)
 
 
 @app.route('/trip')
@@ -89,11 +89,7 @@ def trip():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    try:
-        data = router.trip(coords, **params)
-        return jsonify(data)
-    except requests.RequestException as e:
-        return jsonify({'error': str(e)}), 502
+    return _call_osrm(router.trip, coords, **params)
 
 def run_app() -> None:
     """Запускает сервер, учитывая переменную PORT."""
