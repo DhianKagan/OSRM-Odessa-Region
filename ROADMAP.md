@@ -7,3 +7,7 @@
 - [x] Поддержка CORS и пример Fetch
 - [x] Единый контейнер с OSRM и API
 - [x] Поддержка сервисов `/table`, `/nearest`, `/match`, `/trip`
+- [ ] Модульная структура: `routing`, `graph`, `traffic`
+- [ ] Перестройка Contraction Hierarchies при live-traffic
+- [ ] Переключение алгоритмов `ch`/`mld`
+- [ ] CI/CD в Railway с автоматическим рестартом

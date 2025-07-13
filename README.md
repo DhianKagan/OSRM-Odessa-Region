@@ -8,6 +8,9 @@ osrm-odessa/
 ├── api/
 │   ├── app.py
 │   └── requirements.txt
+├── routing/
+│   ├── router.py
+│   └── ...
 ├── data/
 │   └── odessa_oblast.osm.pbf
 ├── Dockerfile
@@ -53,6 +56,10 @@ curl "http://localhost:5000/route?start=30.7233,46.4825&end=30.7326,46.4775"
 ```
 python scripts/update_data.py
 ```
+
+### Выбор алгоритма
+Переменная `OSRM_ALGORITHM` задаёт используемый движок (`ch` или `mld`).
+Измените её, если требуется fallback на другой алгоритм.
 
 ### Развёртывание на Railway
 1. Создайте новый проект Railway и подключите репозиторий.
