@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 # Запуск OSRM и обёртки Flask
-osrm-routed --algorithm "${OSRM_ALGORITHM:-ch}" \
+osrm-routed --algorithm "${OSRM_ALGORITHM:-mld}" \
     --max-table-size "${OSRM_MAX_TABLE_SIZE:-800}" \
     --max-matching-size "${OSRM_MAX_MATCHING_SIZE:-100}" \
     --port 5001 /data/odessa_oblast.osrm &

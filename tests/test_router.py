@@ -26,3 +26,10 @@ def test_set_algorithm():
     r = router_module.Router()
     r.set_algorithm('mld')
     assert r.algorithm == 'mld'
+
+
+def test_default_algorithm(monkeypatch):
+    monkeypatch.delenv('OSRM_ALGORITHM', raising=False)
+    importlib.reload(router_module)
+    r = router_module.Router()
+    assert r.algorithm == 'mld'
