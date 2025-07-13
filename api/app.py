@@ -7,10 +7,12 @@ import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
+from routing.router import Router
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
+router = Router(OSRM_URL)
 
 # Конфигурация логгера, чтобы сообщения запуска сервера не попадали в error.
 logging.getLogger('werkzeug').setLevel(logging.INFO)
@@ -27,11 +29,9 @@ def route():
     end = request.args.get('end')
     if not start or not end:
         return jsonify({'error': 'start and end required'}), 400
-    url = "{}/route/v1/driving/{};{}?overview=false".format(OSRM_URL, start, end)
     try:
-        resp = requests.get(url)
-        resp.raise_for_status()
-        return jsonify(resp.json())
+        data = router.route(start, end)
+        return jsonify(data)
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 
@@ -44,11 +44,9 @@ def table():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = "{}/table/v1/driving/{}".format(OSRM_URL, coords)
     try:
-        resp = requests.get(url, params=params)
-        resp.raise_for_status()
-        return jsonify(resp.json())
+        data = router.table(coords, **params)
+        return jsonify(data)
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 
@@ -61,11 +59,9 @@ def nearest():
         return jsonify({'error': 'point required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('point', None)
-    url = "{}/nearest/v1/driving/{}".format(OSRM_URL, coord)
     try:
-        resp = requests.get(url, params=params)
-        resp.raise_for_status()
-        return jsonify(resp.json())
+        data = router.nearest(coord, **params)
+        return jsonify(data)
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 
@@ -78,11 +74,9 @@ def match():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = "{}/match/v1/driving/{}".format(OSRM_URL, coords)
     try:
-        resp = requests.get(url, params=params)
-        resp.raise_for_status()
-        return jsonify(resp.json())
+        data = router.match(coords, **params)
+        return jsonify(data)
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 
@@ -95,11 +89,9 @@ def trip():
         return jsonify({'error': 'points required'}), 400
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
-    url = "{}/trip/v1/driving/{}".format(OSRM_URL, coords)
     try:
-        resp = requests.get(url, params=params)
-        resp.raise_for_status()
-        return jsonify(resp.json())
+        data = router.trip(coords, **params)
+        return jsonify(data)
     except requests.RequestException as e:
         return jsonify({'error': str(e)}), 502
 

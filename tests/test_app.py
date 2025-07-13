@@ -5,6 +5,7 @@ from unittest.mock import patch, MagicMock
 import importlib
 import os
 import logging
+sys.path.append('.')
 
 sys.path.append('api')
 import app as app_module
@@ -18,7 +19,7 @@ def _mock_resp():
     return resp
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_route(mock_get):
     client = flask_app.test_client()
     r = client.get('/route?start=1,1&end=2,2')
@@ -26,14 +27,14 @@ def test_route(mock_get):
     assert r.get_json() == {"routes": ["ok"]}
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_cors_header(mock_get):
     client = flask_app.test_client()
     r = client.get('/route?start=1,1&end=2,2', headers={'Origin': 'http://ex.com'})
     assert r.headers.get('Access-Control-Allow-Origin') == '*'
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_stability(mock_get):
     client = flask_app.test_client()
     for _ in range(10):
@@ -41,28 +42,28 @@ def test_stability(mock_get):
         assert r.status_code == 200
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_table(mock_get):
     client = flask_app.test_client()
     r = client.get('/table?points=1,1;2,2')
     assert r.status_code == 200
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_nearest(mock_get):
     client = flask_app.test_client()
     r = client.get('/nearest?point=1,1')
     assert r.status_code == 200
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_match(mock_get):
     client = flask_app.test_client()
     r = client.get('/match?points=1,1;2,2')
     assert r.status_code == 200
 
 
-@patch('app.requests.get', return_value=_mock_resp())
+@patch('routing.router.requests.get', return_value=_mock_resp())
 def test_trip(mock_get):
     client = flask_app.test_client()
     r = client.get('/trip?points=1,1;2,2')
