@@ -46,8 +46,8 @@ def _fallback_waypoint_name(location: Sequence[float], index: int) -> str:
     """Формирует читаемое имя точки, когда OSRM не прислал название."""
     if len(location) >= 2:
         lon, lat = location[0], location[1]
-        return f"{lat:.5f},{lon:.5f}"
-    return f"Точка {index}"
+        return "{:.5f},{:.5f}".format(lat, lon)
+    return "Точка {}".format(index)
 
 
 def _humanize_step(step: Dict[str, Any]) -> str:
@@ -65,7 +65,10 @@ def _humanize_step(step: Dict[str, Any]) -> str:
     text = ' '.join(part for part in parts if part).strip().capitalize()
 
     if name:
-        text = f"{text} по {name}" if step_type != 'arrive' else f"{text} к {name}"
+        if step_type != 'arrive':
+            text = "{} по {}".format(text, name)
+        else:
+            text = "{} к {}".format(text, name)
     return text or 'Двигайтесь дальше'
 
 
@@ -94,17 +97,21 @@ def build_route_summary(response: Dict[str, Any]) -> Dict[str, Any]:
     legs_payload = []
     total_distance = _meters_to_kilometers(route.get('distance', 0.0))
     total_duration = _seconds_to_minutes(route.get('duration', 0.0))
-    message_lines = [f"Маршрут: {total_distance:.1f} км · {total_duration:.0f} мин"]
+    message_lines = ["Маршрут: {:.1f} км · {:.0f} мин".format(total_distance, total_duration)]
 
     for index, leg in enumerate(legs):
         leg_distance = _meters_to_kilometers(leg.get('distance', 0.0))
         leg_duration = _seconds_to_minutes(leg.get('duration', 0.0))
         summary = leg.get('summary') or 'Безымянный участок'
-        origin = waypoint_names[index] if index < len(waypoint_names) else f"Точка {index + 1}"
+        origin = (
+            waypoint_names[index]
+            if index < len(waypoint_names)
+            else "Точка {}".format(index + 1)
+        )
         destination = (
             waypoint_names[index + 1]
             if index + 1 < len(waypoint_names)
-            else f"Точка {index + 2}"
+            else "Точка {}".format(index + 2)
         )
         steps = []
         for step in leg.get('steps') or []:
@@ -124,7 +131,13 @@ def build_route_summary(response: Dict[str, Any]) -> Dict[str, Any]:
         })
 
         message_lines.append(
-            f"{index + 1}) {origin} → {destination}: {leg_distance:.1f} км · {leg_duration:.0f} мин"
+            "{}) {} → {}: {:.1f} км · {:.0f} мин".format(
+                index + 1,
+                origin,
+                destination,
+                leg_distance,
+                leg_duration
+            )
         )
 
     return {
