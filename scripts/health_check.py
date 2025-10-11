@@ -34,7 +34,7 @@ def check_data_files(required_paths: Iterable[str], base_dir: Path | None = None
 
 def check_osrm_status(base_url: str, timeout: float = 5.0) -> Dict[str, Any]:
     """Отправляет тестовый запрос к сервису OSRM и возвращает статус."""
-    url = f"{_normalize_base_url(base_url)}/route/v1/driving/{DEFAULT_SAMPLE_ROUTE}"
+    url = "{}/route/v1/driving/{}".format(_normalize_base_url(base_url), DEFAULT_SAMPLE_ROUTE)
     try:
         response = requests.get(url, params={'overview': 'false'}, timeout=timeout)
         result: Dict[str, Any] = {
