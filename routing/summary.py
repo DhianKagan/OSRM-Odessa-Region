@@ -1,6 +1,7 @@
 """Утилиты форматирования маршрутов OSRM для интеграции с ботами."""
 
 
+
 _MANEUVER_TEXT = {
     'depart': 'Начните движение',
     'arrive': 'Вы прибыли',
@@ -83,7 +84,9 @@ def build_route_summary(response):
     legs = route.get('legs') or []
     waypoints = response.get('waypoints') or []
 
+
     waypoint_names = []
+
     for idx, waypoint in enumerate(waypoints):
         name = waypoint.get('name')
         if not name:

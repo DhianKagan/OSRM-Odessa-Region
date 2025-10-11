@@ -28,7 +28,9 @@ class Router:
 
     def route_points(self, points, **params):
         """Строит маршрут по заранее собранной строке координат."""
+
         query = {'overview': 'false'}
+
         query.update(params)
         path = "/route/v1/driving/{}".format(points)
         return self._request(path, query)
@@ -41,6 +43,7 @@ class Router:
         coordinates.append(end)
         points = ';'.join(coordinates)
         return self.route_points(points, **params)
+
 
     def table(self, points, **params):
         path = "/table/v1/driving/{}".format(points)
@@ -55,6 +58,7 @@ class Router:
         return self._request(path, params)
 
     def trip(self, points, **params):
+
         path = "/trip/v1/driving/{}".format(points)
         return self._request(path, params)
 

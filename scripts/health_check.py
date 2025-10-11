@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 
+
+
 import requests
 
 
@@ -16,10 +18,12 @@ def _normalize_base_url(base_url):
     return base_url[:-1] if base_url.endswith('/') else base_url
 
 
+
 def check_data_files(required_paths, base_dir=None):
     """Проверяет наличие обязательных файлов данных."""
     base = base_dir or Path.cwd()
     results = []
+
     for rel_path in required_paths:
         path = base / rel_path
         results.append({
@@ -37,7 +41,7 @@ def check_osrm_status(base_url, timeout=5.0):
         result = {
             'status_code': response.status_code,
             'status': 'ok' if response.ok else 'error'
-        }
+        }  # type: Dict[str, Any]
         try:
             result['payload'] = response.json()
         except ValueError:
@@ -51,6 +55,7 @@ def check_osrm_status(base_url, timeout=5.0):
 
 
 def run_checks(base_url=None):
+
     """Выполняет полный набор проверок и возвращает структуру с результатами."""
     resolved_url = base_url or os.environ.get('OSRM_URL', 'http://localhost:5000')
     data_results = check_data_files(['data/odessa_oblast.osm.pbf'], base_dir=REPO_ROOT)
