@@ -1,13 +1,14 @@
 """Управление графом дорожной сети."""
 
+
 class Graph:
     """Заглушка объекта графа."""
 
-    def load(self, path: str) -> None:
+    def load(self, path):
         """Загружает граф из файла."""
         # Реализация может быть добавлена при расширении проекта
         return None
 
-    def update_weights(self, data) -> None:
+    def update_weights(self, data):
         """Обновляет веса рёбер на основе трафика."""
         return None

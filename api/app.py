@@ -95,7 +95,7 @@ def trip():
     return _call_osrm(router.trip, coords, **params)
 
 
-def _route_summary(points: str, params: dict) -> dict:
+def _route_summary(points, params):
     """Формирует JSON с оригинальным ответом OSRM и кратким резюме."""
     route_response = router.route_points(points, **params)
     summary = build_route_summary(route_response)
@@ -128,7 +128,7 @@ def route_summary():
     params.setdefault('overview', 'false')
     return _call_osrm(_route_summary, coord_string, params)
 
-def run_app() -> None:
+def run_app():
     """Запускает сервер, учитывая переменную PORT."""
     port = int(os.environ.get('PORT', '5000'))
     handler = logging.StreamHandler(sys.stdout)

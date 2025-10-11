@@ -1,8 +1,6 @@
 """Получение и обработка live-traffic данных."""
 
-from typing import Any
 
-
-def fetch(source: str) -> list[Any]:
+def fetch(source):
     """Заглушка получения трафика."""
     return []
