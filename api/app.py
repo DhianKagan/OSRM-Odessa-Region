@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 from routing.router import Router
+from routing.summary import build_route_summary
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 CORS(app, resources={r"/*": {"origins": "*"}}, send_wildcard=True)
@@ -45,7 +46,9 @@ def route():
     end = request.args.get('end')
     if not start or not end:
         return jsonify({'error': 'start and end required'}), 400
-    return _call_osrm(router.route, start, end)
+    via_points = request.args.getlist('via')
+    params = {k: v for k, v in request.args.items() if k not in {'start', 'end', 'via'}}
+    return _call_osrm(router.route, start, end, via=via_points or None, **params)
 
 
 @app.route('/table')
@@ -90,6 +93,40 @@ def trip():
     params = request.args.to_dict(flat=True)
     params.pop('points', None)
     return _call_osrm(router.trip, coords, **params)
+
+
+def _route_summary(points: str, params: dict) -> dict:
+    """Формирует JSON с оригинальным ответом OSRM и кратким резюме."""
+    route_response = router.route_points(points, **params)
+    summary = build_route_summary(route_response)
+    return {
+        'route': route_response,
+        'summary': summary
+    }
+
+
+@app.route('/route/summary')
+def route_summary():
+    """Возвращает краткое описание маршрута для Telegram-бота."""
+    points = request.args.get('points')
+    if points:
+        coord_string = points
+    else:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        if not start or not end:
+            return jsonify({'error': 'points or start/end required'}), 400
+        via_points = request.args.getlist('via')
+        coordinates = [start]
+        if via_points:
+            coordinates.extend(via_points)
+        coordinates.append(end)
+        coord_string = ';'.join(coordinates)
+
+    params = {k: v for k, v in request.args.items() if k not in {'points', 'start', 'end', 'via'}}
+    params.setdefault('steps', 'true')
+    params.setdefault('overview', 'false')
+    return _call_osrm(_route_summary, coord_string, params)
 
 def run_app() -> None:
     """Запускает сервер, учитывая переменную PORT."""

@@ -39,6 +39,15 @@ def test_route(mock_get):
 
 
 @patch('routing.router.requests.get', return_value=_ok_resp())
+def test_route_with_via_param(mock_get):
+    client = flask_app.test_client()
+    r = client.get('/route?start=1,1&end=4,4&via=2,2&via=3,3&overview=full')
+    assert r.status_code == 200
+    _, kwargs = mock_get.call_args
+    assert kwargs['params']['overview'] == 'full'
+
+
+@patch('routing.router.requests.get', return_value=_ok_resp())
 def test_cors_header(mock_get):
     client = flask_app.test_client()
     r = client.get('/route?start=1,1&end=2,2', headers={'Origin': 'http://ex.com'})
@@ -117,5 +126,44 @@ def test_run_app_logging_setup(mock_run):
         root.setLevel(old_root_level)
         werk.handlers = old_werk_handlers
         werk.setLevel(old_werk_level)
+
+
+def _summary_route_response():
+    return {
+        'routes': [{
+            'distance': 1000.0,
+            'duration': 120.0,
+            'legs': [{
+                'distance': 1000.0,
+                'duration': 120.0,
+                'summary': 'Тестовый участок',
+                'steps': []
+            }]
+        }],
+        'waypoints': [
+            {'name': 'Старт', 'location': [30.0, 46.0]},
+            {'name': 'Финиш', 'location': [31.0, 46.5]}
+        ]
+    }
+
+
+@patch('app.router.route_points', autospec=True)
+def test_route_summary_endpoint(mock_route_points):
+    mock_route_points.return_value = _summary_route_response()
+    client = flask_app.test_client()
+    response = client.get('/route/summary?start=1,1&end=2,2')
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload['summary']['distance_km'] == 1.0
+    assert payload['summary']['duration_min'] == 2.0
+    assert 'route' in payload
+    assert mock_route_points.call_args.kwargs['steps'] == 'true'
+
+
+def test_route_summary_validation():
+    client = flask_app.test_client()
+    response = client.get('/route/summary')
+    assert response.status_code == 400
+    assert response.get_json() == {'error': 'points or start/end required'}
 
 
