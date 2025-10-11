@@ -3,7 +3,8 @@
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+
+
 
 import requests
 
@@ -12,15 +13,17 @@ DEFAULT_SAMPLE_ROUTE = "46.4825,30.7233;46.4825,30.7233"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-def _normalize_base_url(base_url: str) -> str:
+def _normalize_base_url(base_url):
     """Удаляет завершающий слэш для корректной сборки URL."""
     return base_url[:-1] if base_url.endswith('/') else base_url
 
 
-def check_data_files(required_paths: Iterable[str], base_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
+
+def check_data_files(required_paths, base_dir=None):
     """Проверяет наличие обязательных файлов данных."""
     base = base_dir or Path.cwd()
-    results = []  # type: List[Dict[str, Any]]
+    results = []
+
     for rel_path in required_paths:
         path = base / rel_path
         results.append({
@@ -30,7 +33,7 @@ def check_data_files(required_paths: Iterable[str], base_dir: Optional[Path] = N
     return results
 
 
-def check_osrm_status(base_url: str, timeout: float = 5.0) -> Dict[str, Any]:
+def check_osrm_status(base_url, timeout=5.0):
     """Отправляет тестовый запрос к сервису OSRM и возвращает статус."""
     url = "{}/route/v1/driving/{}".format(_normalize_base_url(base_url), DEFAULT_SAMPLE_ROUTE)
     try:
@@ -51,7 +54,8 @@ def check_osrm_status(base_url: str, timeout: float = 5.0) -> Dict[str, Any]:
         }
 
 
-def run_checks(base_url: Optional[str] = None) -> Dict[str, Any]:
+def run_checks(base_url=None):
+
     """Выполняет полный набор проверок и возвращает структуру с результатами."""
     resolved_url = base_url or os.environ.get('OSRM_URL', 'http://localhost:5000')
     data_results = check_data_files(['data/odessa_oblast.osm.pbf'], base_dir=REPO_ROOT)
@@ -63,7 +67,7 @@ def run_checks(base_url: Optional[str] = None) -> Dict[str, Any]:
     }
 
 
-def main() -> None:
+def main():
     """Выводит результаты проверок в формате JSON."""
     results = run_checks()
     print(json.dumps(results, ensure_ascii=False, indent=2))

@@ -2,14 +2,13 @@
 
 import os
 import subprocess
-from typing import Optional
 
 import requests
 
 DEFAULT_URL = "https://download.geofabrik.de/europe/ukraine/odessa-oblast-latest.osm.pbf"
 
 
-def download_map(url: str = DEFAULT_URL, dest: str = "data/odessa_oblast.osm.pbf") -> str:
+def download_map(url=DEFAULT_URL, dest="data/odessa_oblast.osm.pbf"):
     """Скачивает карту и сохраняет её в указанное место."""
     response = requests.get(url, stream=True, timeout=60)
     response.raise_for_status()
@@ -21,7 +20,7 @@ def download_map(url: str = DEFAULT_URL, dest: str = "data/odessa_oblast.osm.pbf
     return dest
 
 
-def prepare_osrm(pbf_path: str = "data/odessa_oblast.osm.pbf") -> None:
+def prepare_osrm(pbf_path="data/odessa_oblast.osm.pbf"):
     """Готовит файлы OSRM для маршрутизации."""
     base = pbf_path.replace(".osm.pbf", ".osrm")
     subprocess.check_call(["osrm-extract", "-p", "/opt/car.lua", pbf_path])

@@ -1,6 +1,5 @@
 """Утилиты форматирования маршрутов OSRM для интеграции с ботами."""
 
-from typing import Any, Dict, List, Sequence
 
 
 _MANEUVER_TEXT = {
@@ -30,17 +29,17 @@ _MODIFIER_TEXT = {
 }
 
 
-def _meters_to_kilometers(value: float) -> float:
+def _meters_to_kilometers(value):
     """Переводит метры в километры с округлением."""
     return round(value / 1000, 2)
 
 
-def _seconds_to_minutes(value: float) -> float:
+def _seconds_to_minutes(value):
     """Переводит секунды в минуты с округлением."""
     return round(value / 60, 1)
 
 
-def _fallback_waypoint_name(location: Sequence[float], index: int) -> str:
+def _fallback_waypoint_name(location, index):
     """Формирует читаемое имя точки, когда OSRM не прислал название."""
     if len(location) >= 2:
         lon, lat = location[0], location[1]
@@ -48,7 +47,7 @@ def _fallback_waypoint_name(location: Sequence[float], index: int) -> str:
     return "Точка {}".format(index)
 
 
-def _humanize_step(step: Dict[str, Any]) -> str:
+def _humanize_step(step):
     """Генерирует простое текстовое описание манёвра."""
     maneuver = step.get('maneuver', {})
     step_type = maneuver.get('type')
@@ -70,7 +69,7 @@ def _humanize_step(step: Dict[str, Any]) -> str:
     return text or 'Двигайтесь дальше'
 
 
-def build_route_summary(response: Dict[str, Any]) -> Dict[str, Any]:
+def build_route_summary(response):
     """Преобразует ответ OSRM в удобный для Telegram формат."""
     routes = response.get('routes') or []
     if not routes:
@@ -85,7 +84,9 @@ def build_route_summary(response: Dict[str, Any]) -> Dict[str, Any]:
     legs = route.get('legs') or []
     waypoints = response.get('waypoints') or []
 
-    waypoint_names = []  # type: List[str]
+
+    waypoint_names = []
+
     for idx, waypoint in enumerate(waypoints):
         name = waypoint.get('name')
         if not name:
