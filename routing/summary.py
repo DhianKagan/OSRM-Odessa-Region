@@ -1,7 +1,5 @@
 """Утилиты форматирования маршрутов OSRM для интеграции с ботами."""
 
-from __future__ import annotations
-
 from typing import Any, Dict, List, Sequence
 
 
@@ -87,7 +85,7 @@ def build_route_summary(response: Dict[str, Any]) -> Dict[str, Any]:
     legs = route.get('legs') or []
     waypoints = response.get('waypoints') or []
 
-    waypoint_names: List[str] = []
+    waypoint_names = []  # type: List[str]
     for idx, waypoint in enumerate(waypoints):
         name = waypoint.get('name')
         if not name:

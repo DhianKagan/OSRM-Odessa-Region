@@ -1,7 +1,5 @@
 """Обёртка над HTTP API OSRM с возможностью смены алгоритма."""
 
-from __future__ import annotations
-
 import os
 from typing import Optional, Sequence, Dict, Any
 
@@ -31,7 +29,7 @@ class Router:
 
     def route_points(self, points: str, **params: Any) -> dict:
         """Строит маршрут по заранее собранной строке координат."""
-        query: Dict[str, Any] = {'overview': 'false'}
+        query = {'overview': 'false'}  # type: Dict[str, Any]
         query.update(params)
         path = "/route/v1/driving/{}".format(points)
         return self._request(path, query)
