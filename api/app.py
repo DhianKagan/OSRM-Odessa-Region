@@ -97,7 +97,14 @@ def trip():
 
 def _route_summary(points, params):
     """Формирует JSON с оригинальным ответом OSRM и кратким резюме."""
-    route_response = router.route_points(points, **params)
+    coordinates = [coord for coord in points.split(';') if coord]
+    if len(coordinates) >= 2:
+        start = coordinates[0]
+        end = coordinates[-1]
+        via_points = coordinates[1:-1] or None
+        route_response = router.route(start, end, via=via_points, **params)
+    else:
+        route_response = router.route_points(points, **params)
     summary = build_route_summary(route_response)
     return {
         'route': route_response,

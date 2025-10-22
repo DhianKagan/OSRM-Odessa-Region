@@ -15,7 +15,7 @@ flask_app = app_module.app
 
 def _ok_resp():
     resp = MagicMock()
-    resp.json.return_value = {"routes": ["ok"]}
+    resp.json.return_value = {"code": "Ok", "routes": ["ok"]}
     resp.raise_for_status.return_value = None
     return resp
 
@@ -35,7 +35,7 @@ def test_route(mock_get):
     client = flask_app.test_client()
     r = client.get('/route?start=1,1&end=2,2')
     assert r.status_code == 200
-    assert r.get_json() == {"routes": ["ok"]}
+    assert r.get_json() == {"code": "Ok", "routes": ["ok"]}
 
 
 @patch('routing.router.requests.get', return_value=_ok_resp())
@@ -130,6 +130,7 @@ def test_run_app_logging_setup(mock_run):
 
 def _summary_route_response():
     return {
+        'code': 'Ok',
         'routes': [{
             'distance': 1000.0,
             'duration': 120.0,
@@ -147,9 +148,9 @@ def _summary_route_response():
     }
 
 
-@patch('app.router.route_points', autospec=True)
-def test_route_summary_endpoint(mock_route_points):
-    mock_route_points.return_value = _summary_route_response()
+@patch('app.router.route', autospec=True)
+def test_route_summary_endpoint(mock_route):
+    mock_route.return_value = _summary_route_response()
     client = flask_app.test_client()
     response = client.get('/route/summary?start=1,1&end=2,2')
     assert response.status_code == 200
@@ -157,7 +158,17 @@ def test_route_summary_endpoint(mock_route_points):
     assert payload['summary']['distance_km'] == 1.0
     assert payload['summary']['duration_min'] == 2.0
     assert 'route' in payload
-    assert mock_route_points.call_args.kwargs['steps'] == 'true'
+    assert mock_route.call_args.kwargs['steps'] == 'true'
+
+
+@patch('app.router.route', autospec=True)
+def test_route_summary_with_points_param(mock_route):
+    mock_route.return_value = _summary_route_response()
+    client = flask_app.test_client()
+    response = client.get('/route/summary?points=1,1;2,2;3,3&steps=false')
+    assert response.status_code == 200
+    assert mock_route.call_args.kwargs['steps'] == 'false'
+    assert mock_route.call_args.kwargs['via'] == ['2,2']
 
 
 def test_route_summary_validation():
