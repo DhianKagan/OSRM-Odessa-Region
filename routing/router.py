@@ -6,6 +6,7 @@ import requests
 
 
 OSRM_URL = os.environ.get('OSRM_URL', 'http://localhost:5000')
+NEAREST_CANDIDATE_LIMIT = 5
 
 
 class Router:
@@ -42,7 +43,65 @@ class Router:
             coordinates.extend(via)
         coordinates.append(end)
         points = ';'.join(coordinates)
-        return self.route_points(points, **params)
+        response = self.route_points(points, **params)
+        if self._is_route_success(response):
+            return response
+
+        fallback_response = self._route_with_nearest_points(start, end, via, params)
+        if fallback_response is not None:
+            return fallback_response
+        return response
+
+    @staticmethod
+    def _is_route_success(response):
+        return (
+            isinstance(response, dict)
+            and response.get('code') == 'Ok'
+            and bool(response.get('routes'))
+        )
+
+    @staticmethod
+    def _format_location(location):
+        if not location or len(location) < 2:
+            return None
+        lon, lat = location[0], location[1]
+        return "{:.6f},{:.6f}".format(lon, lat)
+
+    def _nearest_candidates(self, point):
+        response = self.nearest(point, number=str(NEAREST_CANDIDATE_LIMIT))
+        if response.get('code') != 'Ok':
+            return []
+
+        candidates = []
+        seen = set()
+        for waypoint in response.get('waypoints') or []:
+            formatted = self._format_location(waypoint.get('location'))
+            if formatted and formatted not in seen:
+                candidates.append(formatted)
+                seen.add(formatted)
+        return candidates
+
+    def _route_with_nearest_points(self, start, end, via, params):
+        start_candidates = self._nearest_candidates(start)
+        if not start_candidates:
+            return None
+
+        end_candidates = self._nearest_candidates(end)
+        if not end_candidates:
+            return None
+
+        via_points = list(via) if via else []
+        for start_point in start_candidates:
+            for end_point in end_candidates:
+                coordinates = [start_point]
+                if via_points:
+                    coordinates.extend(via_points)
+                coordinates.append(end_point)
+                points = ';'.join(coordinates)
+                response = self.route_points(points, **params)
+                if self._is_route_success(response):
+                    return response
+        return None
 
 
     def table(self, points, **params):
